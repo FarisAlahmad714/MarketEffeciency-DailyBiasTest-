@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bias Test Results</title>
+</head>
+<body>
+    <h1>Bitcoin Bias Test Results</h1>
+    <p>Your score: {{ score }} / {{ total }}</p>
+    <h2>Review Your Answers</h2>
+    {% for result in results %}
+        <h3>Question {{ loop.index }}</h3>
+        <p>Setup Chart (up to {{ result.setup.split('/')[1].split('_')[1] }}):</p>
+        <img src="{{ url_for('static', filename=result.setup) }}" alt="Setup Chart" width="800">
+        <p>OHLC for {{ result.setup.split('/')[1].split('_')[1] }}:</p>
+        <ul>
+            <li>Open: {{ result.open|round(2) }}</li>
+            <li>High: {{ result.high|round(2) }}</li>
+            <li>Low: {{ result.low|round(2) }}</li>
+            <li>Close: {{ result.close|round(2) }}</li>
+        </ul>
+        <p>Outcome Chart (up to {{ result.outcome.split('/')[1].split('_')[1] }}):</p>
+        <img src="{{ url_for('static', filename=result.outcome) }}" alt="Outcome Chart" width="800">
+        <p>Your Prediction: {{ result.user_answer }}</p>
+        <p>Correct Answer: {{ result.correct_answer }}</p>
+        <p>Result: {% if result.user_answer == result.correct_answer %}Correct{% else %}Incorrect{% endif %}</p>
+        <br>
+    {% endfor %}
+    <a href="/daily_bias/btc">Take Another Test</a>
+</body>
+</html>

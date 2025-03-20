@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bitcoin Bias Test</title>
+</head>
+<body>
+    <h1>Bitcoin Daily Bias Test</h1>
+    <form method="post">
+        {% for question in questions %}
+            <h3>Question {{ loop.index }}</h3>
+            <img src="{{ url_for('static', filename=question.setup) }}" alt="Setup Chart" width="800">
+            <p>OHLC for {{ question.setup.split('/')[1].split('_')[1] }}:</p>
+            <ul>
+                <li>Open: {{ question.open|round(2) }}</li>
+                <li>High: {{ question.high|round(2) }}</li>
+                <li>Low: {{ question.low|round(2) }}</li>
+                <li>Close: {{ question.close|round(2) }}</li>
+            </ul>
+            <p>Predict the next day's sentiment:</p>
+            <input type="radio" name="prediction_{{ loop.index0 }}" value="Bullish" required> Bullish
+            <input type="radio" name="prediction_{{ loop.index0 }}" value="Bearish"> Bearish
+            <br><br>
+        {% endfor %}
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
