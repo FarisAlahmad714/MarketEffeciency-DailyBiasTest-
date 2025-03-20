@@ -6,13 +6,25 @@ import pandas as pd
 import mplfinance as mpf
 import os
 import random
-import time  # Added for delay
+import time
+import pickle  # Added for caching
 
 app = Flask(__name__)
 
 os.makedirs("static/crypto", exist_ok=True)
 
 def fetch_coingecko_data(asset_id="bitcoin", days=365):
+    cache_file = f"cache/{asset_id}_data.pkl"
+    os.makedirs("cache", exist_ok=True)
+    
+    # Check if cached data exists
+    if os.path.exists(cache_file):
+        with open(cache_file, 'rb') as f:
+            data = pickle.load(f)
+        print(f"Loaded {asset_id} data from cache")
+        return data
+    
+    # Fetch from API if no cache
     url = f"https://api.coingecko.com/api/v3/coins/{asset_id}/market_chart?vs_currency=usd&days={days}&interval=daily"
     response = requests.get(url)
     if response.status_code == 200:
@@ -23,7 +35,12 @@ def fetch_coingecko_data(asset_id="bitcoin", days=365):
         data["Open"] = data["Close"].shift(1)
         data["High"] = data["Close"] * 1.02
         data["Low"] = data["Close"] * 0.98
-        return data.dropna()
+        data = data.dropna()
+        # Save to cache
+        with open(cache_file, 'wb') as f:
+            pickle.dump(data, f)
+        print(f"Saved {asset_id} data to cache")
+        return data
     else:
         print(f"Error fetching {asset_id} data: {response.status_code} - {response.text}")
         return None
@@ -79,11 +96,11 @@ def prepare_test_data(asset_id, asset_symbol, days=365, num_tests=5):
 
 # Prepare tests with delays to avoid rate limits
 BTC_TESTS = prepare_test_data("bitcoin", "btc")
-time.sleep(1)  # 1-second delay
+time.sleep(3)  # Increased to 3 seconds
 ETH_TESTS = prepare_test_data("ethereum", "eth")
-time.sleep(1)
+time.sleep(3)
 SOL_TESTS = prepare_test_data("solana", "sol")
-time.sleep(1)
+time.sleep(3)
 BNB_TESTS = prepare_test_data("binancecoin", "bnb")
 
 @app.route("/")
