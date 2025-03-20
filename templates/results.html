@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Bias Test Results</title>
+    <title>{{ asset }} Bias Test Results</title>
 </head>
 <body>
-    <h1>Bitcoin Bias Test Results</h1>
+    <h1>{{ asset }} Bias Test Results</h1>
     <p>Your score: {{ score }} / {{ total }}</p>
     <h2>Review Your Answers</h2>
     {% for result in results %}
@@ -26,6 +26,6 @@
         <p>Result: {% if result.user_answer == result.correct_answer %}Correct{% else %}Incorrect{% endif %}</p>
         <br>
     {% endfor %}
-    <a href="/daily_bias/btc">Take Another Test</a>
+    <a href="/daily_bias/{{ asset_symbol }}">Take Another Test</a>
 </body>
 </html>
